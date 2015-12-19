@@ -34,3 +34,9 @@
 
 - include: enterprise.yml
   when: deployment_type == 'enterprise'
+
+- include: openshift-enterprise.yml
+  when: deployment_type == 'openshift-enterprise'
+
+- include: atomic-enterprise.yml
+  when: deployment_type == 'atomic-enterprise'
