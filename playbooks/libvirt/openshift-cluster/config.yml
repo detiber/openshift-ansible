@@ -22,3 +22,20 @@
     openshift_use_flannel: "{{ lookup('oo_option', 'use_flannel') }}"
     openshift_use_fluentd: "{{ lookup('oo_option', 'use_fluentd') }}"
     openshift_pkg_version: -3.0.2.0
+    openshift_additional_repos:
+    - id: ose
+      name: ose
+      baseurl: http://pulp.dist.prod.ext.phx2.redhat.com/content/dist/rhel/server/7/7Server/x86_64/ose/3.0/os
+      enabled: 1
+      gpgcheck: 0
+    - id: rhel7
+      name: rhel7
+      baseurl: http://pulp.dist.prod.ext.phx2.redhat.com/content/dist/rhel/server/7/7Server/x86_64/os
+      enabled: 1
+      gpgcheck: 0
+    - id: rhel7-extras
+      name: rhel7-extras
+      baseurl: http://pulp.dist.prod.ext.phx2.redhat.com/content/dist/rhel/server/7/7Server/x86_64/extras/os
+      enabled: 1
+      gpgcheck: 0
+

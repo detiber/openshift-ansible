@@ -17,5 +17,22 @@
     with_items: "{{ g_all_hosts | default([]) }}"
 
 - include: ../../common/openshift-cluster/update_repos_and_packages.yml
+  vars:
+    openshift_additional_repos:
+    - id: ose
+      name: ose
+      baseurl: http://pulp.dist.prod.ext.phx2.redhat.com/content/dist/rhel/server/7/7Server/x86_64/ose/3.0/os
+      enabled: 1
+      gpgcheck: 0
+    - id: rhel7
+      name: rhel7
+      baseurl: http://pulp.dist.prod.ext.phx2.redhat.com/content/dist/rhel/server/7/7Server/x86_64/os
+      enabled: 1
+      gpgcheck: 0
+    - id: rhel7-extras
+      name: rhel7-extras
+      baseurl: http://pulp.dist.prod.ext.phx2.redhat.com/content/dist/rhel/server/7/7Server/x86_64/extras/os
+      enabled: 1
+      gpgcheck: 0
 
 - include: config.yml
