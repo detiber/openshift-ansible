@@ -21,3 +21,4 @@
     os_sdn_network_plugin_name: "{{ lookup('oo_option', 'sdn_network_plugin_name') }}"
     openshift_use_flannel: "{{ lookup('oo_option', 'use_flannel') }}"
     openshift_use_fluentd: "{{ lookup('oo_option', 'use_fluentd') }}"
+    openshift_pkg_version: -3.0.2.0
