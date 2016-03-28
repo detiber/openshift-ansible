@@ -819,9 +819,9 @@ def set_sdn_facts_if_unset(facts, system_facts):
 
     if 'master' in facts:
         if 'sdn_cluster_network_cidr' not in facts['master']:
-            facts['master']['sdn_cluster_network_cidr'] = '10.1.0.0/16'
+            facts['master']['sdn_cluster_network_cidr'] = '10.128.0.0/14'
         if 'sdn_host_subnet_length' not in facts['master']:
-            facts['master']['sdn_host_subnet_length'] = '8'
+            facts['master']['sdn_host_subnet_length'] = '9'
 
     if 'node' in facts and 'sdn_mtu' not in facts['node']:
         node_ip = facts['common']['ip']
