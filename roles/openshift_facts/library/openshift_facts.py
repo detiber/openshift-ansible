@@ -400,6 +400,7 @@ def normalize_provider_facts(provider, metadata):
         facts = normalize_openstack_facts(metadata, facts)
     return facts
 
+
 def set_flannel_facts_if_unset(facts):
     """ Set flannel facts if not already present in facts dict
             dict: the facts dict updated with the flannel facts if
@@ -451,7 +452,7 @@ def set_node_schedulability(facts):
                 facts['node']['schedulable'] = True
     return facts
 
-def set_selectors(facts):
+def set_hosted(facts):
     """ Set selectors facts if not already present in facts dict
         Args:
             facts (dict): existing facts
@@ -462,38 +463,62 @@ def set_selectors(facts):
     """
     deployment_type = facts['common']['deployment_type']
     if deployment_type == 'online':
-        selector = "type=infra"
+        default_selector = "type=infra"
     else:
-        selector = "region=infra"
+        default_selector = "region=infra"
 
-    if 'hosted' not in facts:
-        facts['hosted'] = {}
-    if 'router' not in facts['hosted']:
-        facts['hosted']['router'] = {}
-    if 'selector' not in facts['hosted']['router'] or facts['hosted']['router']['selector'] in [None, 'None']:
-        facts['hosted']['router']['selector'] = selector
-    if 'registry' not in facts['hosted']:
-        facts['hosted']['registry'] = {}
-    if 'selector' not in facts['hosted']['registry'] or facts['hosted']['registry']['selector'] in [None, 'None']:
-        facts['hosted']['registry']['selector'] = selector
+    hosted = facts.get('hosted', default=dict())
 
-    return facts
+    for component in ('router', 'registry', 'metrics', 'logging'):
+        comp_values = hosted.get(component, default=dict())
 
-def set_metrics_facts_if_unset(facts):
-    """ Set cluster metrics facts if not already present in facts dict
-            dict: the facts dict updated with the generated cluster metrics facts if
-            missing
-        Args:
-            facts (dict): existing facts
-        Returns:
-            dict: the facts dict updated with the generated cluster metrics
-            facts if they were not already present
+        comp_selector = comp_values.get('selector')
+        comp_values['selector'] = comp_selector if comp_selector not in (None, 'None') else default_selector
 
-    """
-    if 'common' in facts:
-        if 'use_cluster_metrics' not in facts['common']:
-            use_cluster_metrics = False
-            facts['common']['use_cluster_metrics'] = use_cluster_metrics
+        if component == 'metrics':
+            comp_values['duration'] = comp_values.get('duration', default=7)
+            comp_values['resolution'] = comp_values.get('resolution', default='10s')
+
+        storage = comp_values.get('storage', default=dict())
+        storage_kind = storage.get('kind')
+        storage_provider = storage.get('provider')
+
+        volumes = storage.get('volumes', default=[])
+        for vol in volumes:
+            if storage_kind == 'object':
+                if storage_provider == 's3':
+                    pass
+                elif storage_provider == 'swift':
+                    pass
+                elif storage_provider == 'azure':
+                    pass
+            else:
+                vol['size'] = vol.get('size', default='10Gi')
+                if len(volumes) == 1:
+                    vol['name'] = vol.get('name', default=component)
+                else:
+                    vol['name'] = vol.get('name', default="{0}-{1}".format(component, volumes.index(vol)))
+
+                if storage_kind == 'block':
+                    vol['filesystem'] = vol.get('filesystem', default='xfs')
+                    vol['access_modes'] = vol.get('access_modes', default=['ReadWriteOnce'])
+
+                    if storage_provider == 'openstack':
+                        pass
+                    elif storage_provider == 'ebs':
+                        pass
+                elif storage_kind == 'shared':
+                    if storage_provider == 'nfs':
+                        vol['directory'] = vol.get('directory', default='/exports')
+                        vol['options'] = vol.get('options', default='*(rw,root_squash)')
+                        vol['access_modes'] = vol.get('access_modes', default=['ReadWriteMany', 'ReadWriteOnce'])
+
+
+        storage['volumes'] = volumes
+        comp_values['storage'] = storage
+
+        hosted[component] = comp_values
+        facts['hosted'] = hosted
     return facts
 
 def set_dnsmasq_facts_if_unset(facts):
@@ -1639,8 +1664,7 @@ class OpenShiftFacts(object):
         facts = set_flannel_facts_if_unset(facts)
         facts = set_nuage_facts_if_unset(facts)
         facts = set_node_schedulability(facts)
-        facts = set_selectors(facts)
-        facts = set_metrics_facts_if_unset(facts)
+        facts = set_hosted(facts)
         facts = set_identity_providers_if_unset(facts)
         facts = set_sdn_facts_if_unset(facts, self.system_facts)
         facts = set_deployment_facts_if_unset(facts)
