@@ -70,6 +70,9 @@ cp -rp filter_plugins %{buildroot}%{_datadir}/ansible_plugins/
 # openshift-ansible-lookup-plugins install
 cp -rp lookup_plugins %{buildroot}%{_datadir}/ansible_plugins/
 
+# openshift-ansible-callback-plugins install
+cp -rp callback_plugins %{buildroot}%{_datadir}/ansible_plugins/
+
 # create symlinks from /usr/share/ansible/plugins/lookup ->
 # /usr/share/ansible_plugins/lookup_plugins
 pushd %{buildroot}%{_datadir}
@@ -77,6 +80,7 @@ mkdir -p ansible/plugins
 pushd ansible/plugins
 ln -s ../../ansible_plugins/lookup_plugins lookup
 ln -s ../../ansible_plugins/filter_plugins filter
+ln -s ../../ansible_plugins/callback_plugins callback
 popd
 popd
 
@@ -87,6 +91,7 @@ pushd utils
 mv -f %{buildroot}%{_bindir}/oo-install %{buildroot}%{_bindir}/atomic-openshift-installer
 mkdir -p %{buildroot}%{_datadir}/atomic-openshift-utils/
 cp etc/ansible.cfg %{buildroot}%{_datadir}/atomic-openshift-utils/ansible.cfg
+cp etc/ansible-quiet.cfg %{buildroot}%{_datadir}/atomic-openshift-utils/ansible-quiet.cfg
 popd
 
 # Base openshift-ansible files
@@ -120,6 +125,7 @@ Requires:      %{name} = %{version}
 Requires:      %{name}-roles = %{version}
 Requires:      %{name}-lookup-plugins = %{version}
 Requires:      %{name}-filter-plugins = %{version}
+Requires:      %{name}-callback-plugins = %{version}
 BuildArch:     noarch
 
 %description playbooks
@@ -156,6 +162,7 @@ Summary:       Openshift and Atomic Enterprise Ansible roles
 Requires:      %{name} = %{version}
 Requires:      %{name}-lookup-plugins = %{version}
 Requires:      %{name}-filter-plugins = %{version}
+Requires:      %{name}-callback-plugins = %{version}
 BuildArch:     noarch
 
 %description roles
@@ -197,6 +204,22 @@ BuildArch:     noarch
 %{_datadir}/ansible_plugins/lookup_plugins
 %{_datadir}/ansible/plugins/lookup
 
+
+# ----------------------------------------------------------------------------------
+# openshift-ansible-callback-plugins subpackage
+# ----------------------------------------------------------------------------------
+%package callback-plugins
+Summary:       Openshift and Atomic Enterprise Ansible callback plugins
+Requires:      %{name} = %{version}
+BuildArch:     noarch
+
+%description callback-plugins
+%{summary}.
+
+%files callback-plugins
+%{_datadir}/ansible_plugins/callback_plugins
+%{_datadir}/ansible/plugins/callback
+
 # ----------------------------------------------------------------------------------
 # atomic-openshift-utils subpackage
 # ----------------------------------------------------------------------------------
@@ -219,6 +242,7 @@ Atomic OpenShift Utilities includes
 %{python_sitelib}/ooinstall*
 %{_bindir}/atomic-openshift-installer
 %{_datadir}/atomic-openshift-utils/ansible.cfg
+%{_datadir}/atomic-openshift-utils/ansible-quiet.cfg
 
 
 %changelog
@@ -2278,4 +2302,3 @@ Atomic OpenShift Utilities includes
 
 * Mon Oct 19 2015 Troy Dawson <tdawson@redhat.com> 3.0.2-1
 - Initial Package
-
