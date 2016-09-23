@@ -90,6 +90,26 @@ character to indicate a task has been started.
         """
         sys.stdout.write('.')
 
+    def v2_playbook_on_handler_task_start(self, task):
+        """Print out task header for handlers
+
+Rather than print out a header for every handler, we print a dot
+character to indicate a handler task has been started.
+"""
+        sys.stdout.write('.')
+
+    def v2_playbook_on_cleanup_task_start(self, task):
+        """Print out a task header for cleanup tasks
+
+Rather than print out a header for every handler, we print a dot
+character to indicate a handler task has been started.
+"""
+        sys.stdout.write('.')
+
+    def v2_playbook_on_include(self, included_file):
+        """Print out paths to statically included files"""
+        pass
+
     def v2_runner_on_ok(self, result):
         """This prints out task results in a fancy format"""
         pass
@@ -107,9 +127,7 @@ character to indicate a task has been started.
         pass
 
     def v2_playbook_on_notify(self, res, handler):
-        """Printer for handlers
-
-Rather than print out a header for every handler, we print a dot
-character to indicate a handler task has been started.
+        """What happens when a task result is 'changed' and the task has a
+'notify' list attached.
         """
-        sys.stdout.write('.')
+        pass
