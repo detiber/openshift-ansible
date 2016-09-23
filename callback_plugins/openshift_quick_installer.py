@@ -98,7 +98,7 @@ in the `play` object.
         else:
             msg = "PLAY [%s]" % name
 
-        self._display.banner(msg)
+        self.banner(msg)
 
     # pylint: disable=unused-argument,no-self-use
     def v2_playbook_on_task_start(self, task, is_conditional):
