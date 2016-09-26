@@ -1,0 +1,2 @@
+- name: Install etcd
+  action: "{{ ansible_pkg_mgr }} name=etcd state=present"

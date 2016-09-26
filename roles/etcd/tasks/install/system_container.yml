@@ -1,0 +1,5 @@
+- name: Install the etcd container
+  command: atomic install --system --name=etcd {{ openshift.etcd.etcd_image }}
+  register: install_result
+  changed_when: install_result.rc == 0
+  failed_when: "install_result.rc == 1 and 'is already present' not in install_result.stderr"

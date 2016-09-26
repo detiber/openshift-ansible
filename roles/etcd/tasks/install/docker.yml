@@ -1,0 +1,27 @@
+- name: Pull etcd container
+  command: docker pull {{ openshift.etcd.etcd_image }}
+  register: pull_result
+  changed_when: "'Downloaded newer image' in pull_result.stdout"
+
+- name: Install etcd container service file
+  template:
+    dest: "/etc/systemd/system/etcd_container.service"
+    src: etcd.docker.service
+  register: install_etcd_result
+  notify: Reload systemd units
+
+- name: Check for etcd service presence
+  command: systemctl show etcd.service
+  register: etcd_show
+  changed_when: false
+
+- block:
+  - name: Disable system etcd when containerized
+    service:
+      name: etcd
+      state: stopped
+      enabled: no
+
+  - name: Mask system etcd when containerized
+    command: systemctl mask etcd
+  when: "{{ 'LoadState=not-found' not in etcd_show.stdout }}"

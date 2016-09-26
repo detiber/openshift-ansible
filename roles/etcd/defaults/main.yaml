@@ -1,4 +1,6 @@
 ---
+etcd_use_system_container: false
+
 etcd_service: "{{ 'etcd' if not etcd_is_containerized | bool else 'etcd_container' }}"
 etcd_client_port: 2379
 etcd_peer_port: 2380

@@ -1,0 +1,2 @@
+---
+install_playbook: "install/{{ 'package.yml' if not etcd_is_containerized | bool else ('system_container.yml' if etcd_use_system_container | bool else 'docker.yml') }}"
