@@ -52,14 +52,15 @@ ci-unittests:
 	@echo "#############################################"
 	@echo "# Running Unit Tests in virtualenv"
 	@echo "#############################################"
-	. $(NAME)env/bin/activate && nosetests -v --with-coverage --cover-html --cover-min-percentage=70 --cover-package=$(SHORTNAME) test/
+	. $(NAME)env/bin/activate && python setup.py nosetests
 	@echo "VIEW CODE COVERAGE REPORT WITH 'xdg-open cover/index.html' or run 'make viewcover'"
 
 ci-pylint:
 	@echo "#############################################"
 	@echo "# Running PyLint Tests in virtualenv"
 	@echo "#############################################"
-	. $(NAME)env/bin/activate && python -m pylint --rcfile ../git/.pylintrc src/ooinstall/cli_installer.py src/ooinstall/oo_config.py src/ooinstall/openshift_ansible.py src/ooinstall/variants.py ../callback_plugins/openshift_quick_installer.py
+	. $(NAME)env/bin/activate && python setup.py lint
+	. $(NAME)env/bin/activate && python -m pylint --rcfile ../git/.pylintrc ../callback_plugins/openshift_quick_installer.py
 
 ci-list-deps:
 	@echo "#############################################"
@@ -71,14 +72,14 @@ ci-pyflakes:
 	@echo "#################################################"
 	@echo "# Running Pyflakes Compliance Tests in virtualenv"
 	@echo "#################################################"
-	. $(NAME)env/bin/activate && pyflakes src/ooinstall/*.py
+	. $(NAME)env/bin/activate && pyflakes $(SHORTNAME)/*.py
 	. $(NAME)env/bin/activate && pyflakes ../callback_plugins/openshift_quick_installer.py
 
 ci-pep8:
 	@echo "#############################################"
 	@echo "# Running PEP8 Compliance Tests in virtualenv"
 	@echo "#############################################"
-	. $(NAME)env/bin/activate && pep8 --ignore=E501,E121,E124 src/$(SHORTNAME)/
+	. $(NAME)env/bin/activate && pep8 --ignore=E501,E121,E124 $(SHORTNAME)/
 	. $(NAME)env/bin/activate && pep8 --ignore=E501,E121,E124 ../callback_plugins/openshift_quick_installer.py
 
 ci: clean virtualenv ci-list-deps ci-pep8 ci-pylint ci-pyflakes ci-unittests
