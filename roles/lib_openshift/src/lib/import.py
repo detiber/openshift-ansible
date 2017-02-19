@@ -10,11 +10,11 @@ import atexit
 import copy
 import json
 import os
-import sys
 import re
 import shutil
 import subprocess
 import tempfile
+import six
 # pylint: disable=import-error
 try:
     import ruamel.yaml as yaml
