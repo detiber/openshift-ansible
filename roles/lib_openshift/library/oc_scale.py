@@ -326,7 +326,7 @@ class Yedit(object):
 
         # Try to use RoundTripDumper if supported.
         try:
-            Yedit._write(self.filename, yaml.safe_dump(self.yaml_dict, Dumper=yaml.RoundTripDumper))
+            Yedit._write(self.filename, yaml.dump(self.yaml_dict, Dumper=yaml.RoundTripDumper))
         except AttributeError:
             Yedit._write(self.filename, yaml.safe_dump(self.yaml_dict, default_flow_style=False))
 
