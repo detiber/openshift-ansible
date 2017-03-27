@@ -47,6 +47,13 @@ BINARY_LOOKUP_PARAMS = [
     }
 ]
 BINARY_LOOKUP_IDS = [param['id'] for param in BINARY_LOOKUP_PARAMS]
+MODULE_PATH = os.path.realpath(os.path.join(os.path.dirname(__file__),
+                                            os.pardir, os.pardir,
+                                            os.pardir, 'library'))
+MODULE_FILES = [f for f in os.listdir(MODULE_PATH) if f.endswith('.py')]
+
+@pytest.fixture(scope=session, params=MODULE_FILES)
+def module_to_test(request):
 
 
 @pytest.fixture(params=BINARY_LOOKUP_PARAMS, ids=BINARY_LOOKUP_IDS)
