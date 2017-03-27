@@ -74,7 +74,10 @@ class LibvirtInventory(object):
         config.read(
             os.path.dirname(os.path.realpath(__file__)) + '/libvirt.ini'
         )
-        self.libvirt_uri = config.get('libvirt', 'uri')
+        try:
+            self.libvirt_uri = config.get('libvirt', 'uri')
+        except ConfigParser.Error:
+            self.libvirt_uri = 'qemu:///system'
 
     def parse_cli_args(self):
         ''' Command line argument processing '''
