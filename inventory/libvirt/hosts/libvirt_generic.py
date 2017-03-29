@@ -35,11 +35,12 @@ info about all of your managed instances.
 ######################################################################
 
 import argparse
-import ConfigParser
 import os
 import sys
 import libvirt
 import xml.etree.ElementTree as ET
+
+from six.moves import configparser
 
 try:
     import json
@@ -70,14 +71,14 @@ class LibvirtInventory(object):
     def read_settings(self):
         ''' Reads the settings from the libvirt.ini file '''
 
-        config = ConfigParser.SafeConfigParser()
+        config = configparser.SafeConfigParser()
         config.read(
             os.path.dirname(os.path.realpath(__file__)) + '/libvirt.ini'
         )
         try:
             self.libvirt_uri = config.get('libvirt', 'uri')
-        except ConfigParser.Error:
-            self.libvirt_uri = 'qemu:///system'
+        except configparser.Error:
+            self.libvirt_uri = os.environ.get('LIBVIRT_URI', 'qemu:///system')
 
     def parse_cli_args(self):
         ''' Command line argument processing '''
@@ -114,7 +115,7 @@ class LibvirtInventory(object):
     def get_inventory(self):
         ''' Construct the inventory '''
 
-        inventory = dict(_meta=dict(hostvars=dict()))
+        inventory = dict(libvirt=dict(hosts=[]), _meta=dict(hostvars=dict()))
 
         conn = libvirt.openReadOnly(self.libvirt_uri)
         if conn is None:
@@ -169,6 +170,7 @@ class LibvirtInventory(object):
                         hostvars['libvirt_ip_address'] = ip_address
 
             inventory['_meta']['hostvars'][domain_name] = hostvars
+            inventory['libvirt']['hosts'].append(domain_name)
 
         return inventory
 
