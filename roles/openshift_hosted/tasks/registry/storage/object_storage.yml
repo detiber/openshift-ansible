@@ -9,7 +9,7 @@
     msg: >
       Support for provider: "{{ openshift.hosted.registry.storage.provider }}"
       not implemented yet
-  when: openshift.hosted.registry.storage.provider in ['azure_blob', 'swift']
+  when: openshift.hosted.registry.storage.provider in ['azure_blob']
 
 - include: s3.yml
   when: openshift.hosted.registry.storage.provider == 's3'
