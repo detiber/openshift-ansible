@@ -112,17 +112,17 @@
 
 # TODO: re-enable this once the metrics deployer validation issue is fixed
 # when using dynamically provisioned volumes
-- name: "Wait for image pull and deployer pod"
-  shell: >
-    {{ openshift.common.client_binary }}
-    --namespace openshift-infra
-    --config={{ openshift_metrics_kubeconfig }}
-    get {{ deploy_metrics.stdout }}
-  register: deploy_result
-  until: "{{ 'Completed' in deploy_result.stdout }}"
-  failed_when: False
-  retries: 60
-  delay: 10
+#- name: "Wait for image pull and deployer pod"
+#  shell: >
+#    {{ openshift.common.client_binary }}
+#    --namespace openshift-infra
+#    --config={{ openshift_metrics_kubeconfig }}
+#    get {{ deploy_metrics.stdout }}
+#  register: deploy_result
+#  until: "{{ 'Completed' in deploy_result.stdout }}"
+#  failed_when: False
+#  retries: 60
+#  delay: 10
 
 - name: Configure master for metrics
   modify_yaml:
